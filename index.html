@@ -18,15 +18,18 @@
         <p class="lead" id="welcome-desc"></p>
         <div class="welcome-actions">
           <button type="button" class="btn btn-primary" id="btn-start">
-            开始测评（标准版）
+            开始测评
           </button>
-          <button type="button" class="btn btn-secondary" id="btn-hypertension" disabled>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            id="btn-hypertension"
+            hidden
+          >
             高血压版（更典、更扎心）
           </button>
         </div>
-        <p class="welcome-hint" id="welcome-hypertension-hint">
-          完成标准版并看到结果后，解锁高血压版；可随时重测。
-        </p>
+        <p class="welcome-hint" id="welcome-hypertension-hint"></p>
       </section>
 
       <section id="screen-quiz" class="screen is-hidden" aria-live="polite">
@@ -48,6 +51,24 @@
         <p class="result-tagline" id="result-tagline"></p>
         <p class="result-hypertension-roast" id="result-hypertension-roast" hidden></p>
         <ul class="result-tips" id="result-tips" hidden></ul>
+        <div id="result-unlock-card" class="result-unlock-card" hidden>
+          <p class="result-unlock-kicker">新内容已解锁</p>
+          <p class="result-unlock-title">「高血压版」题库开放</p>
+          <p class="result-unlock-desc">
+            更典的职场场景、讽刺拉满，专测一听就血压上来的那种时刻。要再来一轮吗？
+          </p>
+          <div class="result-unlock-actions">
+            <button type="button" class="btn btn-secondary" id="btn-unlock-try-hyper">
+              立即测高血压版
+            </button>
+            <button type="button" class="btn btn-primary" id="btn-unlock-back-home">
+              返回首页
+            </button>
+            <button type="button" class="btn btn-ghost" id="btn-unlock-later">
+              稍后再说
+            </button>
+          </div>
+        </div>
         <button type="button" class="btn btn-primary" id="btn-reset">再测一次</button>
       </section>
     </main>

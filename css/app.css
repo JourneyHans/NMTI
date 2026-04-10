@@ -226,6 +226,43 @@ body {
   color: #ff8a8a;
 }
 
+.result-unlock-card {
+  margin: 1.25rem 0 1rem;
+  padding: 1rem 1.1rem;
+  border-radius: var(--radius);
+  border: 1px solid #8b4040;
+  background: rgba(139, 64, 64, 0.18);
+  max-width: 32rem;
+}
+
+.result-unlock-kicker {
+  margin: 0 0 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #ff9a9a;
+}
+
+.result-unlock-title {
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.result-unlock-desc {
+  margin: 0 0 1rem;
+  font-size: 0.9rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.result-unlock-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
 .result-tips {
   margin: 0 0 1.25rem;
   padding-left: 1.2rem;

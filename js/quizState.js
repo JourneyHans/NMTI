@@ -56,6 +56,8 @@ export function createQuizState(bus) {
   /** @type {Array<{ axis: string, prompt: string, choices: { text: string, letter: string }[] }>} */
   let sessionQuestions = [];
   let sessionMode = MODE_STANDARD;
+  /** 标准版首次通关后，在结果页展示解锁引导（直至用户开始新测评或主动关闭） */
+  let showFirstUnlockPrompt = false;
 
   const notify = () => bus.emit("quiz/changed");
 
@@ -65,6 +67,7 @@ export function createQuizState(bus) {
     if (mode === MODE_HYPERTENSION && !readHypertensionUnlocked()) {
       return;
     }
+    showFirstUnlockPrompt = false;
     phase = "quiz";
     index = 0;
     scores = emptyScores();
@@ -86,7 +89,11 @@ export function createQuizState(bus) {
     if (index >= sessionQuestions.length) {
       phase = "result";
       if (sessionMode === MODE_STANDARD) {
+        const firstUnlock = !readHypertensionUnlocked();
         writeStandardComplete();
+        if (firstUnlock) {
+          showFirstUnlockPrompt = true;
+        }
       }
     }
     notify();
@@ -111,12 +118,18 @@ export function createQuizState(bus) {
   });
 
   bus.on("quiz/reset", () => {
+    showFirstUnlockPrompt = false;
     phase = "welcome";
     index = 0;
     scores = emptyScores();
     history = [];
     sessionQuestions = [];
     sessionMode = MODE_STANDARD;
+    notify();
+  });
+
+  bus.on("quiz/dismissUnlockPrompt", () => {
+    showFirstUnlockPrompt = false;
     notify();
   });
 
@@ -131,7 +144,12 @@ export function createQuizState(bus) {
       hypertensionUnlocked,
     };
     if (phase !== "result") {
-      return { ...base, code: null, typeInfo: null };
+      return {
+        ...base,
+        code: null,
+        typeInfo: null,
+        showFirstUnlockPrompt: false,
+      };
     }
     const code = deriveCode(scores);
     const typeInfo = TYPES[code] ?? {
@@ -140,7 +158,13 @@ export function createQuizState(bus) {
       tips: [],
       hypertensionRoast: "",
     };
-    return { ...base, code, typeInfo };
+    return {
+      ...base,
+      code,
+      typeInfo,
+      showFirstUnlockPrompt:
+        sessionMode === MODE_STANDARD && showFirstUnlockPrompt,
+    };
   }
 
   return { getSnapshot };

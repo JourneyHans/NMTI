@@ -10,7 +10,7 @@ export const META = {
   siteName: "NMTI",
   tagline: "牛马型人格测评 · 职场搞笑版",
   welcomeHtml:
-    "通过 12 道「领导与流程」场景题，看看你的 NMTI 四字母是哪一种。先完成标准版可解锁「高血压版」题库（更典、更扎心）。结果仅供玩梗，请勿当真。",
+    "通过 12 道「领导与流程」场景题，看看你的 NMTI 四字母是哪一种。首次完成测评后，还有一份更扎心的隐藏题库等你。结果仅供玩梗，请勿当真。",
 };
 
 export const MODE_STANDARD = "standard";

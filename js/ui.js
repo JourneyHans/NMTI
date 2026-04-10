@@ -22,10 +22,14 @@ export function mountUi(bus, meta, getSnapshot) {
   const resultTagline = $("result-tagline");
   const resultHypertensionRoast = $("result-hypertension-roast");
   const resultTips = $("result-tips");
+  const resultUnlockCard = $("result-unlock-card");
   const btnStart = $("btn-start");
   const btnHypertension = $("btn-hypertension");
   const btnPrev = $("btn-prev");
   const btnReset = $("btn-reset");
+  const btnUnlockTryHyper = $("btn-unlock-try-hyper");
+  const btnUnlockBackHome = $("btn-unlock-back-home");
+  const btnUnlockLater = $("btn-unlock-later");
 
   metaSiteName.textContent = meta.siteName;
   metaTagline.textContent = meta.tagline;
@@ -39,6 +43,13 @@ export function mountUi(bus, meta, getSnapshot) {
   );
   btnPrev.addEventListener("click", () => bus.emit("quiz/prev"));
   btnReset.addEventListener("click", () => bus.emit("quiz/reset"));
+  btnUnlockTryHyper.addEventListener("click", () =>
+    bus.emit("quiz/start", { mode: MODE_HYPERTENSION }),
+  );
+  btnUnlockBackHome.addEventListener("click", () => bus.emit("quiz/reset"));
+  btnUnlockLater.addEventListener("click", () =>
+    bus.emit("quiz/dismissUnlockPrompt"),
+  );
 
   function setScreen(name) {
     screenWelcome.classList.toggle("is-hidden", name !== "welcome");
@@ -49,10 +60,10 @@ export function mountUi(bus, meta, getSnapshot) {
   function renderWelcome(snap) {
     setScreen("welcome");
     const unlocked = snap.hypertensionUnlocked;
-    btnHypertension.disabled = !unlocked;
+    btnHypertension.hidden = !unlocked;
     welcomeHypertensionHint.textContent = unlocked
-      ? "高血压版已解锁，题目更典；可随时重测标准版或高血压版。"
-      : "完成标准版并看到结果后，解锁高血压版；可随时重测。";
+      ? "「高血压版」已解锁，可从首页进入；也可随时再测标准版。"
+      : "首次完成测评并看到结果后，将解锁更扎心的「高血压版」题库。";
   }
 
   function resetChoiceUiState() {
@@ -129,6 +140,10 @@ export function mountUi(bus, meta, getSnapshot) {
       resultTips.hidden = true;
       resultTips.replaceChildren();
     }
+
+    const showUnlock = snap.showFirstUnlockPrompt === true;
+    resultUnlockCard.hidden = !showUnlock;
+    btnReset.hidden = showUnlock;
   }
 
   function render() {
