@@ -1,4 +1,8 @@
-import { MODE_STANDARD, MODE_HYPERTENSION } from "./config.js";
+import {
+  MODE_STANDARD,
+  MODE_HYPERTENSION,
+  UNLOCK_STORAGE_KEY,
+} from "./config.js";
 
 const CHOICE_PREFIXES = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
@@ -30,6 +34,7 @@ export function mountUi(bus, meta, getSnapshot) {
   const btnUnlockTryHyper = $("btn-unlock-try-hyper");
   const btnUnlockBackHome = $("btn-unlock-back-home");
   const btnUnlockLater = $("btn-unlock-later");
+  const btnClearCache = $("btn-clear-cache");
 
   metaSiteName.textContent = meta.siteName;
   metaTagline.textContent = meta.tagline;
@@ -50,6 +55,21 @@ export function mountUi(bus, meta, getSnapshot) {
   btnUnlockLater.addEventListener("click", () =>
     bus.emit("quiz/dismissUnlockPrompt"),
   );
+  btnClearCache.addEventListener("click", () => {
+    if (
+      !window.confirm(
+        "确定清除本机保存的数据？解锁进度将重置，并立即回到欢迎页。",
+      )
+    ) {
+      return;
+    }
+    try {
+      localStorage.removeItem(UNLOCK_STORAGE_KEY);
+    } catch (_) {
+      /* ignore */
+    }
+    bus.emit("quiz/reset");
+  });
 
   function setScreen(name) {
     screenWelcome.classList.toggle("is-hidden", name !== "welcome");
