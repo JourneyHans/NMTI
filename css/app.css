@@ -150,13 +150,6 @@ body {
   gap: 0;
 }
 
-.welcome-hint {
-  margin: 1rem 0 0;
-  font-size: 0.8125rem;
-  color: var(--muted);
-  max-width: 32rem;
-}
-
 .btn-ghost {
   background: transparent;
   color: var(--muted);

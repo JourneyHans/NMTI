@@ -15,7 +15,6 @@ export function mountUi(bus, meta, getSnapshot) {
   const metaSiteName = $("meta-site-name");
   const metaTagline = $("meta-tagline");
   const welcomeDesc = $("welcome-desc");
-  const welcomeHypertensionHint = $("welcome-hypertension-hint");
   const progressBar = $("quiz-progress-bar");
   const progressText = $("quiz-progress-text");
   const quizPrompt = $("quiz-prompt");
@@ -79,11 +78,7 @@ export function mountUi(bus, meta, getSnapshot) {
 
   function renderWelcome(snap) {
     setScreen("welcome");
-    const unlocked = snap.hypertensionUnlocked;
-    btnHypertension.hidden = !unlocked;
-    welcomeHypertensionHint.textContent = unlocked
-      ? "「高血压版」已解锁，可从首页进入；也可随时再测标准版。"
-      : "首次完成测评并看到结果后，将解锁更扎心的「高血压版」题库。";
+    btnHypertension.hidden = !snap.hypertensionUnlocked;
   }
 
   function resetChoiceUiState() {
