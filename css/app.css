@@ -176,6 +176,11 @@ body {
   margin-bottom: 1rem;
 }
 
+/* 切题后极短窗口内屏蔽指针事件，避免鼠标未移动时 :hover 落到新按钮同一几何位置 */
+.choices.choices--cooldown {
+  pointer-events: none;
+}
+
 .quiz-actions {
   margin-top: 0.5rem;
 }

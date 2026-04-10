@@ -77,6 +77,7 @@ export function mountUi(bus, meta, getSnapshot) {
 
     resetChoiceUiState();
     quizChoices.replaceChildren();
+    quizChoices.classList.add("choices--cooldown");
 
     q.choices.forEach((c, i) => {
       const prefix = CHOICE_PREFIXES[i] ?? String(i + 1);
@@ -93,6 +94,9 @@ export function mountUi(bus, meta, getSnapshot) {
 
     requestAnimationFrame(() => {
       quizPrompt.focus({ preventScroll: true });
+      window.setTimeout(() => {
+        quizChoices.classList.remove("choices--cooldown");
+      }, 50);
     });
   }
 
