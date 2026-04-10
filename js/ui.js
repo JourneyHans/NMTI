@@ -1,4 +1,4 @@
-import { QUESTIONS } from "./config.js";
+const CHOICE_PREFIXES = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 export function mountUi(bus, meta, getSnapshot) {
   const $ = (id) => document.getElementById(id);
@@ -35,20 +35,42 @@ export function mountUi(bus, meta, getSnapshot) {
     screenResult.classList.toggle("is-hidden", name !== "result");
   }
 
-  function renderQuiz(index) {
-    const q = QUESTIONS[index];
-    const n = index + 1;
-    progressText.textContent = `第 ${n} / ${QUESTIONS.length} 题`;
-    progressBar.style.width = `${(n / QUESTIONS.length) * 100}%`;
+  function resetChoiceUiState() {
+    const active = document.activeElement;
+    if (active instanceof HTMLElement && quizChoices.contains(active)) {
+      active.blur();
+    }
+  }
+
+  function renderQuiz(snap) {
+    const questions = snap.sessionQuestions;
+    const q = questions[snap.index];
+    if (!q) return;
+
+    const total = questions.length;
+    const n = snap.index + 1;
+    progressText.textContent = `第 ${n} / ${total} 题`;
+    progressBar.style.width = `${(n / total) * 100}%`;
     quizPrompt.textContent = q.prompt;
+
+    resetChoiceUiState();
     quizChoices.replaceChildren();
-    q.choices.forEach((c) => {
+
+    q.choices.forEach((c, i) => {
+      const prefix = CHOICE_PREFIXES[i] ?? String(i + 1);
       const b = document.createElement("button");
       b.type = "button";
       b.className = "btn btn-choice";
-      b.textContent = c.text;
-      b.addEventListener("click", () => bus.emit("quiz/answer", { letter: c.letter }));
+      b.textContent = `${prefix}. ${c.text}`;
+      b.addEventListener("click", () => {
+        b.blur();
+        bus.emit("quiz/answer", { letter: c.letter });
+      });
       quizChoices.appendChild(b);
+    });
+
+    requestAnimationFrame(() => {
+      quizPrompt.focus({ preventScroll: true });
     });
   }
 
@@ -81,7 +103,7 @@ export function mountUi(bus, meta, getSnapshot) {
 
     if (snap.phase === "quiz") {
       setScreen("quiz");
-      renderQuiz(snap.index);
+      renderQuiz(snap);
       return;
     }
 

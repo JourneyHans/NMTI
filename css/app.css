@@ -102,10 +102,16 @@ body {
   text-align: left;
   line-height: 1.45;
   margin-bottom: 0.65rem;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 .btn-choice:hover {
   border-color: var(--accent-dim);
+}
+
+.question:focus {
+  outline: none;
 }
 
 .progress-wrap {

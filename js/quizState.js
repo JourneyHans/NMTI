@@ -1,4 +1,4 @@
-import { QUESTIONS, TYPES, AXIS_PRIORITY } from "./config.js";
+import { buildSessionQuestions, TYPES, AXIS_PRIORITY } from "./config.js";
 
 function emptyScores() {
   return {
@@ -28,6 +28,8 @@ export function createQuizState(bus) {
   let scores = emptyScores();
   /** @type {{ axis: string, letter: string }[]} */
   let history = [];
+  /** @type {Array<{ axis: string, prompt: string, choices: { text: string, letter: string }[] }>} */
+  let sessionQuestions = [];
 
   const notify = () => bus.emit("quiz/changed");
 
@@ -36,17 +38,18 @@ export function createQuizState(bus) {
     index = 0;
     scores = emptyScores();
     history = [];
+    sessionQuestions = buildSessionQuestions();
     notify();
   });
 
   bus.on("quiz/answer", ({ letter }) => {
     if (phase !== "quiz") return;
-    const q = QUESTIONS[index];
+    const q = sessionQuestions[index];
     if (!q || !(letter in scores[q.axis])) return;
     scores[q.axis][letter] += 1;
     history.push({ axis: q.axis, letter });
     index += 1;
-    if (index >= QUESTIONS.length) {
+    if (index >= sessionQuestions.length) {
       phase = "result";
     }
     notify();
@@ -64,6 +67,7 @@ export function createQuizState(bus) {
       phase = "welcome";
       scores = emptyScores();
       history = [];
+      sessionQuestions = [];
       notify();
     }
   });
@@ -73,11 +77,17 @@ export function createQuizState(bus) {
     index = 0;
     scores = emptyScores();
     history = [];
+    sessionQuestions = [];
     notify();
   });
 
   function getSnapshot() {
-    const base = { phase, index, scores };
+    const base = {
+      phase,
+      index,
+      scores,
+      sessionQuestions,
+    };
     if (phase !== "result") {
       return { ...base, code: null, typeInfo: null };
     }

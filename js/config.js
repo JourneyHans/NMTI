@@ -1,7 +1,10 @@
 /**
  * 集中配置：改文案/题库主要编辑本文件。
- * 题目 1–3 → E/I，4–6 → S/N，7–9 → T/F，10–12 → J/P。
+ * 使用 QUESTION_POOL；每次测评从池中按轴各随机抽 QUESTIONS_PER_AXIS 道，再打乱题目顺序（选项顺序不变）。
  */
+
+export const QUESTIONS_PER_AXIS = 3;
+export const SESSION_QUESTION_COUNT = QUESTIONS_PER_AXIS * 4;
 
 export const META = {
   siteName: "NMTI",
@@ -18,7 +21,7 @@ export const AXIS_PRIORITY = {
   JP: ["J", "P"],
 };
 
-export const QUESTIONS = [
+export const QUESTION_POOL = [
   {
     axis: "EI",
     prompt: "周五 17:50，领导在大群发：「有个小事，我们对齐一下。」你第一反应是？",
@@ -139,7 +142,161 @@ export const QUESTIONS = [
       { text: "先休息，相信周一晨会会改需求。", letter: "P" },
     ],
   },
+  {
+    axis: "EI",
+    prompt: "群里领导发「辛苦了」半天没人接话，你会？",
+    choices: [
+      { text: "带头回个表情包或+1，把场子圆过去。", letter: "E" },
+      { text: "装死，等别人先回，自己跟队形。", letter: "I" },
+      { text: "顺便同步一下进度，让老板看见在推进。", letter: "E" },
+      { text: "私聊小群吐槽：这又是哪种话术。", letter: "I" },
+    ],
+  },
+  {
+    axis: "EI",
+    prompt: "评优前夕领导突然对你格外亲切，你？",
+    choices: [
+      { text: "主动汇报成果，顺便对齐预期。", letter: "E" },
+      { text: "礼貌回应，内心拉响防空警报。", letter: "I" },
+      { text: "约个短会，把「今年贡献」说清楚。", letter: "E" },
+      { text: "减少单独相处，有事走邮件。", letter: "I" },
+    ],
+  },
+  {
+    axis: "EI",
+    prompt: "大会上被点名「年轻人要多承担」，你？",
+    choices: [
+      { text: "当场接话，问清范围、资源和截止时间。", letter: "E" },
+      { text: "微笑点头，心里想这饼几分熟。", letter: "I" },
+      { text: "提议「是否同步到项目看板」防止口头需求。", letter: "E" },
+      { text: "会后找直属主管确认到底算不算你 KPI。", letter: "I" },
+    ],
+  },
+  {
+    axis: "SN",
+    prompt: "领导嘴上说「这个很简单，就是改一下」，你怎么听？",
+    choices: [
+      { text: "简单=要改需求文档和验收标准，先对齐范围。", letter: "S" },
+      { text: "翻译：牵涉八个子系统，只是他不知道。", letter: "N" },
+      { text: "让他指一下「改一下」对应哪一行 PRD。", letter: "S" },
+      { text: "先听谁在叹气，叹气的人掌握真相。", letter: "N" },
+    ],
+  },
+  {
+    axis: "SN",
+    prompt: "PPT 里出现「按照行业最佳实践」，你相信？",
+    choices: [
+      { text: "不信，除非脚注里有标准名和版本号。", letter: "S" },
+      { text: "信，因为它通常意味着「先上线再说」。", letter: "N" },
+      { text: "要求会后补链接，没链接当没写。", letter: "S" },
+      { text: "观察老板点头频率判断是不是场面话。", letter: "N" },
+    ],
+  },
+  {
+    axis: "SN",
+    prompt: "流程文件写「原则上不允许」，你的理解是？",
+    choices: [
+      { text: "原则上=书面禁止，要走例外审批。", letter: "S" },
+      { text: "原则上=大家心里都默许那种。", letter: "N" },
+      { text: "先邮件问法务/合规怎么留痕。", letter: "S" },
+      { text: "看谁上次违规还没事，跟风向标走。", letter: "N" },
+    ],
+  },
+  {
+    axis: "TF",
+    prompt: "领导让你「客观评价一下」某位同事，你？",
+    choices: [
+      { text: "列事实与产出，形容词尽量少。", letter: "T" },
+      { text: "先肯定人，再轻描淡写提改进点。", letter: "F" },
+      { text: "要求匿名问卷，拒绝口头站队。", letter: "T" },
+      { text: "反问评价用途，避免被当枪使。", letter: "F" },
+    ],
+  },
+  {
+    axis: "TF",
+    prompt: "加班到半夜发现是领导自己记错需求，你？",
+    choices: [
+      { text: "发邮件复盘：变更记录与责任边界写清楚。", letter: "T" },
+      { text: "先别发火，明天找个台阶让他改口。", letter: "F" },
+      { text: "把聊天记录和旧版需求打包转发。", letter: "T" },
+      { text: "群里委婉@，给彼此留面子。", letter: "F" },
+    ],
+  },
+  {
+    axis: "TF",
+    prompt: "KPI 硬指标和团队氛围冲突时，你更倾向？",
+    choices: [
+      { text: "指标优先，氛围靠流程而不是靠忍。", letter: "T" },
+      { text: "先保人不散，再找老板要资源或砍目标。", letter: "F" },
+      { text: "把冲突写进风险清单，让上级拍板。", letter: "T" },
+      { text: "私下串气，争取集体讨价还价。", letter: "F" },
+    ],
+  },
+  {
+    axis: "JP",
+    prompt: "插队需求杀进来，你手上的排期？",
+    choices: [
+      { text: "立刻重排优先级表，标红影响范围。", letter: "J" },
+      { text: "先插着做，相信排期会在下周自愈。", letter: "P" },
+      { text: "要书面确认「砍哪条旧需求」再开干。", letter: "J" },
+      { text: "看哪条最会吵，谁吵赢谁先。", letter: "P" },
+    ],
+  },
+  {
+    axis: "JP",
+    prompt: "截止日前一天老板说「再 polish 一下细节」，你？",
+    choices: [
+      { text: "列出 polish 清单和所需小时数，谈砍范围。", letter: "J" },
+      { text: "先改最显眼的两处，剩下的看命。", letter: "P" },
+      { text: "锁 scope：本轮只接受这三类修改。", letter: "J" },
+      { text: "通宵兜底，同时祈祷需求别再变。", letter: "P" },
+    ],
+  },
+  {
+    axis: "JP",
+    prompt: "你发现上游依赖还没交付，你这边已经到节点了，你？",
+    choices: [
+      { text: "升级风险邮件，抄送相关方要新计划。", letter: "J" },
+      { text: "先 mock 数据顶着，等真来了再真接。", letter: "P" },
+      { text: "拉会对齐「假完成」与「真完成」定义。", letter: "J" },
+      { text: "边做边等，相信他们「马上就好」。", letter: "P" },
+    ],
+  },
 ];
+
+function shuffleInPlace(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+/**
+ * 每轴随机抽 QUESTIONS_PER_AXIS 道（不重复），再整体打乱题目顺序。
+ */
+export function buildSessionQuestions() {
+  const axes = ["EI", "SN", "TF", "JP"];
+  const byAxis = { EI: [], SN: [], TF: [], JP: [] };
+  for (const q of QUESTION_POOL) {
+    const list = byAxis[q.axis];
+    if (list) list.push(q);
+  }
+  const picked = [];
+  for (const ax of axes) {
+    const pool = byAxis[ax];
+    if (pool.length < QUESTIONS_PER_AXIS) {
+      throw new Error(
+        `NMTI: 题库轴 ${ax} 至少需要 ${QUESTIONS_PER_AXIS} 道题，当前 ${pool.length}。请补充 QUESTION_POOL。`,
+      );
+    }
+    const copy = [...pool];
+    shuffleInPlace(copy);
+    picked.push(...copy.slice(0, QUESTIONS_PER_AXIS));
+  }
+  shuffleInPlace(picked);
+  return picked;
+}
 
 export const TYPES = {
   ESTJ: {
