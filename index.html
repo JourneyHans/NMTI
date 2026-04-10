@@ -16,7 +16,17 @@
       <section id="screen-welcome" class="screen" aria-labelledby="welcome-title">
         <h1 id="welcome-title" class="title">NMTI</h1>
         <p class="lead" id="welcome-desc"></p>
-        <button type="button" class="btn btn-primary" id="btn-start">开始测评</button>
+        <div class="welcome-actions">
+          <button type="button" class="btn btn-primary" id="btn-start">
+            开始测评（标准版）
+          </button>
+          <button type="button" class="btn btn-secondary" id="btn-hypertension" disabled>
+            高血压版（更典、更扎心）
+          </button>
+        </div>
+        <p class="welcome-hint" id="welcome-hypertension-hint">
+          完成标准版并看到结果后，解锁高血压版；可随时重测。
+        </p>
       </section>
 
       <section id="screen-quiz" class="screen is-hidden" aria-live="polite">
@@ -32,10 +42,11 @@
       </section>
 
       <section id="screen-result" class="screen is-hidden" aria-labelledby="result-code">
-        <p class="result-label">你的 NMTI</p>
+        <p class="result-label" id="result-label">你的 NMTI</p>
         <h2 class="result-code" id="result-code"></h2>
         <h3 class="result-name" id="result-name"></h3>
         <p class="result-tagline" id="result-tagline"></p>
+        <p class="result-hypertension-roast" id="result-hypertension-roast" hidden></p>
         <ul class="result-tips" id="result-tips" hidden></ul>
         <button type="button" class="btn btn-primary" id="btn-reset">再测一次</button>
       </section>

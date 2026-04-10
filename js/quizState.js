@@ -1,4 +1,13 @@
-import { buildSessionQuestions, TYPES, AXIS_PRIORITY } from "./config.js";
+import {
+  buildSessionQuestions,
+  TYPES,
+  AXIS_PRIORITY,
+  QUESTION_POOL,
+  QUESTION_POOL_HYPERTENSION,
+  MODE_STANDARD,
+  MODE_HYPERTENSION,
+  UNLOCK_STORAGE_KEY,
+} from "./config.js";
 
 function emptyScores() {
   return {
@@ -7,6 +16,22 @@ function emptyScores() {
     TF: { T: 0, F: 0 },
     JP: { J: 0, P: 0 },
   };
+}
+
+function readHypertensionUnlocked() {
+  try {
+    return localStorage.getItem(UNLOCK_STORAGE_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function writeStandardComplete() {
+  try {
+    localStorage.setItem(UNLOCK_STORAGE_KEY, "1");
+  } catch (_) {
+    /* ignore quota / private mode */
+  }
 }
 
 /**
@@ -30,15 +55,24 @@ export function createQuizState(bus) {
   let history = [];
   /** @type {Array<{ axis: string, prompt: string, choices: { text: string, letter: string }[] }>} */
   let sessionQuestions = [];
+  let sessionMode = MODE_STANDARD;
 
   const notify = () => bus.emit("quiz/changed");
 
-  bus.on("quiz/start", () => {
+  bus.on("quiz/start", (payload = {}) => {
+    const mode =
+      payload.mode === MODE_HYPERTENSION ? MODE_HYPERTENSION : MODE_STANDARD;
+    if (mode === MODE_HYPERTENSION && !readHypertensionUnlocked()) {
+      return;
+    }
     phase = "quiz";
     index = 0;
     scores = emptyScores();
     history = [];
-    sessionQuestions = buildSessionQuestions();
+    sessionMode = mode;
+    const pool =
+      mode === MODE_HYPERTENSION ? QUESTION_POOL_HYPERTENSION : QUESTION_POOL;
+    sessionQuestions = buildSessionQuestions(pool);
     notify();
   });
 
@@ -51,6 +85,9 @@ export function createQuizState(bus) {
     index += 1;
     if (index >= sessionQuestions.length) {
       phase = "result";
+      if (sessionMode === MODE_STANDARD) {
+        writeStandardComplete();
+      }
     }
     notify();
   });
@@ -68,6 +105,7 @@ export function createQuizState(bus) {
       scores = emptyScores();
       history = [];
       sessionQuestions = [];
+      sessionMode = MODE_STANDARD;
       notify();
     }
   });
@@ -78,15 +116,19 @@ export function createQuizState(bus) {
     scores = emptyScores();
     history = [];
     sessionQuestions = [];
+    sessionMode = MODE_STANDARD;
     notify();
   });
 
   function getSnapshot() {
+    const hypertensionUnlocked = readHypertensionUnlocked();
     const base = {
       phase,
       index,
       scores,
       sessionQuestions,
+      mode: sessionMode,
+      hypertensionUnlocked,
     };
     if (phase !== "result") {
       return { ...base, code: null, typeInfo: null };
@@ -96,6 +138,7 @@ export function createQuizState(bus) {
       name: "未知型",
       tagline: "配置里还没收录这个组合，请改 config.js。",
       tips: [],
+      hypertensionRoast: "",
     };
     return { ...base, code, typeInfo };
   }
